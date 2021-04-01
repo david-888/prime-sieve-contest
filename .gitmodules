@@ -1,0 +1,3 @@
+[submodule "cpp-prime-sieve/test/3rd-party/googletest"]
+	path = cpp-prime-sieve/test/3rd-party/googletest
+	url = https://github.com/google/googletest.git
