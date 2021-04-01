@@ -3,12 +3,14 @@ add_library(primesieve STATIC
     PrimeSieve.cpp
 )
 
-target_compile_options(primesieve
-    PRIVATE
-        -Wall
-        -Wextra
-        -Wpedantic
+if(COMPILER_GNU OR COMPILER_CLANG)
+    target_compile_options(primesieve
+        PRIVATE
+            -Wall
+            -Wextra
+            -Wpedantic
 )
+endif()
 
 target_include_directories(primesieve
     PUBLIC
@@ -22,12 +24,14 @@ add_executable(prime-sieve
     Main.cpp
 )
 
-target_compile_options(prime-sieve
-    PRIVATE
-        -Wall
-        -Wextra
-        -Wpedantic
+if(COMPILER_GNU OR COMPILER_CLANG)
+    target_compile_options(prime-sieve
+        PRIVATE
+            -Wall
+            -Wextra
+            -Wpedantic
 )
+endif()
 
 target_include_directories(prime-sieve
     PUBLIC
