@@ -11,13 +11,13 @@ namespace zhang::math
 class PrimeSieve final
 {
     public:
-        explicit PrimeSieve(int range);
+        explicit PrimeSieve(long range);
         ~PrimeSieve() = default;
         void sieve();
-        [[nodiscard]] int countPrimes() const;
-        [[nodiscard]] bool isPrime(int candidate) const;
+        [[nodiscard]] long countPrimes() const;
+        [[nodiscard]] bool isPrime(long candidate) const;
     private:
-        int range;
+        long range;
         std::vector<bool> primeCandidates;
 };
 

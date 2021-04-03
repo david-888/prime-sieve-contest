@@ -7,35 +7,35 @@
 namespace zhang::math
 {
 
-PrimeSieve::PrimeSieve(int range)
+PrimeSieve::PrimeSieve(long range)
     : range{range}, primeCandidates(range / 2, true)
 { }
 
-inline bool testPrimeCandidate(const std::vector<bool>& primeCandidates, int candidate)
+inline bool testPrimeCandidate(const std::vector<bool>& primeCandidates, long candidate)
 {
-    int index = (candidate - 1) / 2;
+    long index = (candidate - 1) / 2;
     return primeCandidates[index];
 }
 
-inline void clearPrimeCandidate(std::vector<bool>& primeCandidates, int candidate)
+inline void clearPrimeCandidate(std::vector<bool>& primeCandidates, long candidate)
 {
-    int index = (candidate - 1) / 2;
+    long index = (candidate - 1) / 2;
     primeCandidates[index] = false;
 }
 
 void PrimeSieve::sieve()
 {
-    int limit = std::sqrt(range);
+    long limit = std::sqrt(range);
     primeCandidates[0] = false;
     if(range > 1) {
-        for (int nextPrime = 3; nextPrime <= limit; nextPrime += 2) {
-            for (int candidate = nextPrime; candidate <= limit; candidate += 2) {
+        for (long nextPrime = 3; nextPrime <= limit; nextPrime += 2) {
+            for (long candidate = nextPrime; candidate <= limit; candidate += 2) {
                 if (testPrimeCandidate(primeCandidates, candidate)) {
                     nextPrime = candidate;
                     break;
                 }
             }
-            int notPrime = nextPrime * nextPrime;
+            long notPrime = nextPrime * nextPrime;
             do {
                 clearPrimeCandidate(primeCandidates, notPrime);
                 notPrime += nextPrime * 2;
@@ -44,10 +44,10 @@ void PrimeSieve::sieve()
     }
 }
 
-int PrimeSieve::countPrimes() const
+long PrimeSieve::countPrimes() const
 {
-    int count{0};
-    int candidate{3};
+    long count{0};
+    long candidate{3};
     if(range >= 2) {
         count = 1;
     }
@@ -61,7 +61,7 @@ int PrimeSieve::countPrimes() const
     return count;
 }
 
-bool PrimeSieve::isPrime(int candidate) const
+bool PrimeSieve::isPrime(long candidate) const
 {
     if(candidate < 2) {
         return false;

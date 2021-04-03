@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     }
 
     std::string_view argRange{argv[1]};
-    int range{0};
+    long range{0};
 #ifdef _WIN32
     auto result = std::from_chars(argRange.begin()._Unwrapped(), argRange.end()._Unwrapped(), range);
     if (result.ptr != argRange.end()._Unwrapped()) {
