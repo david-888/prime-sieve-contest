@@ -8,26 +8,36 @@ namespace zhang::math
 {
 
 PrimeSieve::PrimeSieve(int range)
-    : primeCandidates(range + 1, true)
+    : range{range}, primeCandidates(range / 2, true)
 { }
+
+inline bool testPrimeCandidate(const std::vector<bool>& primeCandidates, int candidate)
+{
+    int index = (candidate - 1) / 2;
+    return primeCandidates[index];
+}
+
+inline void clearPrimeCandidate(std::vector<bool>& primeCandidates, int candidate)
+{
+    int index = (candidate - 1) / 2;
+    primeCandidates[index] = false;
+}
 
 void PrimeSieve::sieve()
 {
-    int range = primeCandidates.size();
-    int limit = std::sqrt(primeCandidates.size());
+    int limit = std::sqrt(range);
     primeCandidates[0] = false;
     if(range > 1) {
-        primeCandidates[1] = false;
         for (int nextPrime = 3; nextPrime <= limit; nextPrime += 2) {
             for (int candidate = nextPrime; candidate <= limit; candidate += 2) {
-                if (primeCandidates[candidate]) {
+                if (testPrimeCandidate(primeCandidates, candidate)) {
                     nextPrime = candidate;
                     break;
                 }
             }
             int notPrime = nextPrime * nextPrime;
             do {
-                primeCandidates[notPrime] = false;
+                clearPrimeCandidate(primeCandidates, notPrime);
                 notPrime += nextPrime * 2;
             } while(notPrime < range);
         }
@@ -37,14 +47,15 @@ void PrimeSieve::sieve()
 int PrimeSieve::countPrimes() const
 {
     int count{0};
-    int candidate = 0;
-    int range = primeCandidates.size();
-    if(range > 2) {
+    int candidate{3};
+    if(range >= 2) {
         count = 1;
-        candidate = 3;
     }
-    while(candidate < range) {
-        count += primeCandidates[candidate];
+    if(range < 3) {
+        return count;
+    }
+    while(candidate <= range) {
+        count += testPrimeCandidate(primeCandidates, candidate);
         candidate += 2;
     }
     return count;
@@ -52,14 +63,14 @@ int PrimeSieve::countPrimes() const
 
 bool PrimeSieve::isPrime(int candidate) const
 {
-    if(candidate < 0) {
+    if(candidate < 2) {
         return false;
     }
     if(candidate % 2 == 0) {
         return candidate == 2;
     }
-    if(candidate < static_cast<int>(primeCandidates.size())) {
-        return primeCandidates[candidate];
+    if(candidate <= range) {
+        return testPrimeCandidate(primeCandidates, candidate);
     }
     throw std::runtime_error(std::string{"PrimeSieve::isPrime() : candidate is out of range: "} + std::to_string(candidate));
 }

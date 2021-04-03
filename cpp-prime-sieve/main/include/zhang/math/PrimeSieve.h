@@ -17,6 +17,7 @@ class PrimeSieve final
         [[nodiscard]] int countPrimes() const;
         [[nodiscard]] bool isPrime(int candidate) const;
     private:
+        int range;
         std::vector<bool> primeCandidates;
 };
 
