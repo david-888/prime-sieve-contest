@@ -59,9 +59,10 @@ int main(int argc, char* argv[])
         primeSieve->sieve();
     } while(++iterationCounter < iterationLimit);
     auto primeCount = primeSieve->countPrimes();
+    auto finish = std::chrono::steady_clock::now();
     std::cout << "Found " << primeCount << " primes.\n";
     std::cout << "Iteration Counter: " << iterationCounter << "\n";
-    std::cout << "Duration: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << "ms" << std::endl;
+    std::cout << "Duration: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << "ms" << std::endl;
     return 0;
 }
 
