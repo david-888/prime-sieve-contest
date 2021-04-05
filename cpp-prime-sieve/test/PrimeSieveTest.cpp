@@ -49,6 +49,20 @@ TEST_F(PrimeSieveTest, range3)
     EXPECT_TRUE(primeSieve.isPrime(3));
 }
 
+TEST_F(PrimeSieveTest, range49)
+{
+    PrimeSieve primeSieve{49};
+    primeSieve.sieve();
+    int numberOfPrimes = primeSieve.countPrimes();
+    EXPECT_EQ(numberOfPrimes, 15);
+    EXPECT_FALSE(primeSieve.isPrime(0));
+    EXPECT_FALSE(primeSieve.isPrime(1));
+    EXPECT_TRUE(primeSieve.isPrime(2));
+    EXPECT_TRUE(primeSieve.isPrime(3));
+    EXPECT_TRUE(primeSieve.isPrime(5));
+    EXPECT_TRUE(primeSieve.isPrime(7));
+}
+
 TEST_F(PrimeSieveTest, range100)
 {
     PrimeSieve primeSieve{100};
