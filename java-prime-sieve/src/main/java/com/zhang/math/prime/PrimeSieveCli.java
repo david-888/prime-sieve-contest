@@ -1,66 +1,31 @@
 package com.zhang.math.prime;
 
 public class PrimeSieveCli {
+    private int range;
+    private int iterationLimit = 1;
+    private boolean warmup = false;
+    private int warmupIterationLimit = 100;
 
     public static void main(String[] args) throws Exception {
-        if(args.length < 1 || args.length > 3) {
-            System.out.println("usage: java -jar primesieve-xxx.jar <range> [<iterations>] [warmup]");
-            System.exit(1);
-            return;
-        }
+        var app = new PrimeSieveCli();
 
-        final int range;
         try {
-            range = Integer.parseInt(args[0]);
-        } catch(NumberFormatException e) {
-            System.err.println("invalid range: " + e.getMessage());
+            app.parseCliParameters(args);
+            app.warmup();
+        } catch(CliParameterException e) {
+            System.err.println(e.getMessage());
             System.exit(1);
             return;
-        }
-        if(range < 0) {
-            System.err.println("invalid range: range must be greater than or equal to zero");
-            System.exit(1);
+        } catch(WarmupException e) {
+            System.err.println(e.getMessage());
+            System.exit(2);
             return;
         }
 
-        int iterationLimit = 1;
-        if(args.length >= 2) {
-            try {
-                iterationLimit = Integer.parseInt(args[1]);
-            } catch(NumberFormatException e) {
-                System.err.println("invalid number of iterations: " + e.getMessage());
-                System.exit(1);
-                return;
-            }
-            if(iterationLimit < 1) {
-                System.err.println("number of iterations cannot be less than one");
-                System.exit(1);
-                return;
-            }
-        }
+        app.run();
+    }
 
-        boolean warmup = false;
-        if(args.length >= 3) {
-            if(args[2].equals("warmup")) {
-                warmup = true;
-            } else {
-                System.err.println("unknown parameter: " + args[2]);
-                System.exit(1);
-                return;
-            }
-        }
-
-
-        if(warmup) {
-            int c = 0;
-            do {
-                PrimeSieve primeSieveWU = new PrimeSieve(1_000_000);
-                primeSieveWU.sieve();
-                primeSieveWU.countPrimes();
-            } while(++c < 3000);
-            Thread.sleep(100);
-        }
-
+    private void run() {
         var start = System.currentTimeMillis();
         int iterationCounter = 0;
         PrimeSieve primeSieve = null;
@@ -73,6 +38,68 @@ public class PrimeSieveCli {
         System.out.println("Found " + primeCount + " primes.");
         System.out.println("Iteration Counter: " + iterationCounter);
         System.out.println("Duration: " + (end - start) + "ms");
+    }
+
+    private void warmup() throws InterruptedException {
+        if(warmup) {
+            int warmupIterationCounter = 0;
+            do {
+                PrimeSieve primeSieveWU = new PrimeSieve(1_000_000);
+                primeSieveWU.sieve();
+                primeSieveWU.countPrimes();
+            } while (++warmupIterationCounter < warmupIterationLimit);
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException e) {
+                throw new WarmupException("Interrupted during warmup", e);
+            }
+        }
+    }
+
+    private void parseCliParameters(String[] args) {
+        if(args.length < 1 || args.length > 4) {
+            throw new CliParameterException("wrong number of parameters\n"
+                + "usage: java -jar primesieve-xxx.jar <range> [<iterations>] [warmup] [<warmup iterations>]");
+        }
+
+        try {
+            range = Integer.parseInt(args[0]);
+        } catch(NumberFormatException e) {
+            throw new CliParameterException("invalid range: " + e.getMessage(), e);
+        }
+        if(range < 0) {
+            throw new CliParameterException("invalid range: range must be greater than or equal to zero");
+        }
+
+        if(args.length >= 2) {
+            try {
+                iterationLimit = Integer.parseInt(args[1]);
+            } catch(NumberFormatException e) {
+                throw new CliParameterException("invalid number of iterations: " + e.getMessage(), e);
+            }
+            if(iterationLimit < 1) {
+                throw new CliParameterException("number of iterations cannot be less than one");
+            }
+        }
+
+        if(args.length >= 3) {
+            if(args[2].equals("warmup")) {
+                warmup = true;
+            } else {
+                throw new CliParameterException("unknown parameter: " + args[2]);
+            }
+        }
+
+        if(args.length >= 4) {
+            try {
+                warmupIterationLimit = Integer.parseInt(args[3]);
+            } catch (NumberFormatException e) {
+                throw new CliParameterException("invalid number of warmup iterations: " + e.getMessage(), e);
+            }
+            if (warmupIterationLimit < 1) {
+                throw new CliParameterException("number of warmup iterations cannot be less than one");
+            }
+        }
     }
 
 }
